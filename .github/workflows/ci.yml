@@ -1,9 +1,9 @@
 name: CI
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [develop, main22]
   push:
-    branches: [develop, main]
+    branches: [develop, main2f]
 
 jobs:
   build:
@@ -63,3 +63,5 @@ jobs:
         env:
           SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+      - name: Open Issue
+        if: failure() && github.event_name == 'push'
