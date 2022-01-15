@@ -4291,7 +4291,7 @@ const run = async () => {
       body,
       assignees: assignees ? assignees.split('\n') : undefined,
     });
-    core.setOutput('issue', JOSN.stringfy(response.data));
+    core.setOutput('issue', JSON.stringfy(response.data));
   } catch (error) {
     core.setFailed(error.message);
   }
