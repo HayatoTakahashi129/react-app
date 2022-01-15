@@ -10,7 +10,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Title
           body: Body
-          assigness: |
+          assignees: |
             hayato129
             hayato1
       - run: |
