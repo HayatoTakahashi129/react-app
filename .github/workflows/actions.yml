@@ -11,8 +11,7 @@ jobs:
           title: Title
           body: Body
           assignees: |
-            hayato129
-            hayato1
+            HayatoTakahashi129
       - run: |
           echo ${{ steps.issue.outputs.issue }}
       - uses: ./.github/actions/hello
