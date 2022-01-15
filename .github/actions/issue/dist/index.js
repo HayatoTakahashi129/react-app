@@ -4285,7 +4285,7 @@ const run = async () => {
       auth: token,
     });
 
-    const respnose = await octokit.rest.issues.create({
+    const response = await octokit.rest.issues.create({
       ...github.context.repo,
       title,
       body,
