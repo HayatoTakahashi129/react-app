@@ -4272,23 +4272,32 @@ exports.getIDToken = getIDToken;
 
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
+const { Octokit } = __webpack_require__(889);
 
-try {
-  const token = core.getInput('token');
-  const title = core.getInput('title');
-  const body = core.getInput('body');
-  const assignees = core.getInput('assignees');
+const run = async () => {
+  try {
+    const token = core.getInput('token');
+    const title = core.getInput('title');
+    const body = core.getInput('body');
+    const assignees = core.getInput('assignees');
 
-  const octokit = new github.Github(token);
-  const respnose = octokit.issues.create({
-    ...github.context.repo,
-    title,
-    assignees: assignees ? assignees.split('\n') : undefined,
-  });
-  core.setOutput('issue', JOSN.stringfy(response.data));
-} catch (error) {
-  core.setFailed(error.message);
-}
+    const octokit = new Octokit({
+      auth: token,
+    });
+
+    const respnose = await octokit.rest.issues.create({
+      ...github.context.repo,
+      title,
+      body,
+      assignees: assignees ? assignees.split('\n') : undefined,
+    });
+    core.setOutput('issue', JOSN.stringfy(response.data));
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+};
+
+run();
 
 
 /***/ }),
@@ -6763,6 +6772,31 @@ function removeHook(state, name, method) {
 
 /***/ }),
 
+/***/ 889:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var core = __webpack_require__(448);
+var pluginRequestLog = __webpack_require__(916);
+var pluginPaginateRest = __webpack_require__(299);
+var pluginRestEndpointMethods = __webpack_require__(842);
+
+const VERSION = "18.12.0";
+
+const Octokit = core.Octokit.plugin(pluginRequestLog.requestLog, pluginRestEndpointMethods.legacyRestEndpointMethods, pluginPaginateRest.paginateRest).defaults({
+  userAgent: `octokit-rest.js/${VERSION}`
+});
+
+exports.Octokit = Octokit;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ 898:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -6884,6 +6918,44 @@ function withCustomRequest(customRequest) {
 exports.GraphqlResponseError = GraphqlResponseError;
 exports.graphql = graphql$1;
 exports.withCustomRequest = withCustomRequest;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 916:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const VERSION = "1.0.4";
+
+/**
+ * @param octokit Octokit instance
+ * @param options Options passed to Octokit constructor
+ */
+
+function requestLog(octokit) {
+  octokit.hook.wrap("request", (request, options) => {
+    octokit.log.debug("request", options);
+    const start = Date.now();
+    const requestOptions = octokit.request.endpoint.parse(options);
+    const path = requestOptions.url.replace(options.baseUrl, "");
+    return request(options).then(response => {
+      octokit.log.info(`${requestOptions.method} ${path} - ${response.status} in ${Date.now() - start}ms`);
+      return response;
+    }).catch(error => {
+      octokit.log.info(`${requestOptions.method} ${path} - ${error.status} in ${Date.now() - start}ms`);
+      throw error;
+    });
+  });
+}
+requestLog.VERSION = VERSION;
+
+exports.requestLog = requestLog;
 //# sourceMappingURL=index.js.map
 
 
