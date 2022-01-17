@@ -16,3 +16,5 @@ echo "some stuff"
 echo "some stuff"
 echo '::endgroup::'
 
+echo '::set-nev name=HELLO::hello'
+
